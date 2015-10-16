@@ -33,7 +33,7 @@ Cuba.plugin Shield::Helpers
 
 Ohm.connect(url: REDIS_URL)
 Ost.connect(url: REDIS_URL)
-Malone.connect(url: MALONE_URL, tls: false, domain: "punchgirls.com")
+Malone.connect(url: MALONE_URL, tls: false, domain: "jobdayz.com")
 
 Dir["./models/**/*.rb"].each  { |rb| require rb }
 Dir["./routes/**/*.rb"].each  { |rb| require rb }
@@ -46,7 +46,7 @@ Cuba.plugin DeveloperHelpers
 Cuba.plugin UserHelpers
 
 Cuba.use Rack::Session::Cookie,
-  key: "job_board",
+  key: "jobdayz",
   secret: APP_SECRET
 
 Cuba.use Rack::Protection, except: :http_origin
