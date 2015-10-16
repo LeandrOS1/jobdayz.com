@@ -1,0 +1,95 @@
+% posts = params.fetch(:posts, nil)
+% query = params.fetch(:query, "")
+% developer = this.current_developer
+% user = this.current_user
+% all_posts_link = params.fetch(:all_posts_link, false)
+% locations = params.fetch(:locations, {})
+% location = params.fetch(:location, "")
+
+<section id="search">
+  {{ this.partial("search_box", query: query, all_posts_link: all_posts_link) }}
+
+% unless locations.empty?
+    {{ this.partial("filter", locations: locations, location: location) }}
+% end
+
+  % if posts.nil?
+    <p>Start searching by adding keywords.</p>
+  % elsif posts.empty?
+    <p>No posts matched your search. Try again!</p>
+  % else
+    % posts.each do |post|
+        <section id="post-{{ post.id }}" class="listing-item">
+          % if this.current_developer
+            % application = developer.applications.find(post_id: post.id).first
+          % end
+          <img src="{{ post.company.gravatar }}">
+          <ul>
+            <li><a href="/search?post_id={{ post.id }}">{{ this.h(post.title) }}</a></li>
+            <li>@</li>
+            <li><a href="/search?company_id={{ post.company.id }}">{{ this.h(post.posted_by) }}</a></li>
+
+            % if post.company_url
+              <li> |</li>
+              <li><a href="{{ this.h(post.company_url) }}">{{ this.h(post.company_url) }}</a></li>
+            % end
+
+            % if post.location
+              <li> |</li>
+              <li>{{ this.h(post.location) }}</li>
+            % end
+
+            <li> |</li>
+            <li>Posted {{ post.posted }}</li>
+          </ul>
+          <ul id="post-details-{{ post.id }}">
+            % tags = post.tags.split(",").join(", ")
+            <li><i class="fa fa-tags"></i>{{ this.h(tags) }}</li>
+            <li>|</li>
+            % if post.remote == "true"
+              <li>Work from anywhere</li>
+            % else
+              <li>On-site only</li>
+            % end
+            % if developer && application
+              <li>|</li>
+              <li class="application-status">
+                Application status:
+                {{ application.status }}
+              </li>
+            % end
+          </ul>
+          <p class="description">{{ this.h(post.description) }}</p>
+          {{ this.partial("developer/message_form", post: post) }}
+          % if !this.current_user.instance_of?(Company)
+            <ul class="section-footer">
+              <li>
+                % if this.current_user.nil?
+                  <a href="/favorite?post_id={{ post.id }}"><i class="fa fa-star-o"></i>favorite</a>
+                % elsif developer.favorites.member?(post)
+                  <span id="favorite-link-{{ post.id }}" class="link" href="/favorite/{{ post.id }}" onclick="favoritePost({{ post.id }})">
+                    <i class="fa fa-star"></i>favorited</span>
+                % else
+                  <span id="favorite-link-{{ post.id }}" class="link" href="/favorite/{{ post.id }}" onclick="favoritePost({{ post.id }})">
+                    <i class="fa fa-star-o"></i>favorite</span>
+                % end
+              </li>
+              <li>
+                % if this.current_user.nil?
+                  <a href="/apply?post_id={{ post.id }}"><i class="fa fa-check"></i>apply</a>
+                % elsif application.nil?
+                  <span id="apply-link-{{ post.id }}" class="link" onclick="apply({{ post.id }})">
+                    <i class="fa fa-check"></i>apply</span>
+                % elsif application && application.message.nil?
+                  <span id="apply-link-{{ post.id }}" class="link" onclick="showMsgForm({{ post.id }})">
+                    <i class="fa fa-envelope"></i>send message to company</span>
+                % end
+             </li>
+          </ul>
+        % end
+      </section>
+    % end
+  % end
+</section>
+
+<script src="/js/punchTokens.js"></script>

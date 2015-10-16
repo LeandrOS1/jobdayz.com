@@ -1,0 +1,17 @@
+<form id="punchTokens" name="punchTokens" action="/search" method="GET">
+  <ul id="token-list">
+    <li id="last-child">
+      <input id="input-field" placeholder="Search: Ruby, Cuba, Redis" autocomplete="off" type="text">
+    </li>
+  </ul>
+
+  <button id="search-btn"><i class="fa fa-search"></i></button>
+
+  <ul id="autocomplete-list"></ul>
+
+  % if all_posts_link
+    <a class="link-large" href="/search?query=All+posts">All posts</a>
+  % end
+
+  <input type="hidden" id="query" name="query" value="{{ query }}">
+</form>

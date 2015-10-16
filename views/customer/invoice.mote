@@ -1,0 +1,31 @@
+% date = Time.at(invoice.date.to_i).strftime("%e/%b/%y")
+% lines = invoice.lines.data
+
+<section id="invoice">
+  <ul class="highlight-box">
+    <h3>Invoice details</h3>
+      <li>
+        <p>ID: {{ invoice.id }}</p>
+        <p>Date: {{ date }}</p>
+        <p>Total: {{ invoice.total / 100 }} USD</p>
+      </li>
+    <h3>Specification</h3>
+
+    % lines.each do |line|
+      % start = Time.at(line.period.start.to_i).strftime("%e/%b/%y")
+      % stop = Time.at(line.period.end.to_i).strftime("%e/%b/%y")
+      <li>
+        % if !line.plan.nil?
+          <p>Subscribed to plan: <span class="capitalize">{{ line.plan.id }}</span></p>
+          <p>Plan description: ({{ plan.posts }} posts/month)</p>
+          <p>Charged period: {{ start }} to {{ stop }}</p>
+        % else
+          <p>Description: {{ line.description }}</p>
+          <p>Date: {{ date }}</p>
+        % end
+        <p>Amount: {{ line.amount / 100 }} USD</p>
+      </li>
+    % end
+  </ul>
+  <p><a href="/customer/history">Back to payment history</a></p>
+</section>

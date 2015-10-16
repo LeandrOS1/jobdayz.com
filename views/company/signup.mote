@@ -1,0 +1,69 @@
+<section id="signup">
+  % signup = params.fetch(:signup, false)
+
+  % if signup
+    % if signup.errors[:name] == [:not_present, :not_in_range]
+      <p class="error">Company name is required</p>
+    % end
+    % if signup.errors[:name] == [:not_in_range]
+      <p class="error">Company name should not exceed 30 characters</p>
+    % end
+    % if signup.errors[:email] == [:not_email]
+      <p class="error">E-mail not valid</p>
+    % end
+    % if signup.errors[:email] == [:not_unique]
+      <p class="error">This e-mail is already registered</p>
+    % end
+    % if signup.errors[:url] == [:not_url]
+      <p class="error">URL not valid</p>
+    % end
+    % if signup.errors[:password] == [:too_small]
+      <p class="error">The password length must be at least 6 characters</p>
+    % end
+    % if signup.errors[:password] == [:not_confirmed] || signup.errors[:password] == [:too_small, :not_confirmed]
+      <p class="error">Passwords don't match</p>
+    % end
+    % if !signup.errors[:error_message].empty?
+      <p class="error">{{ signup.errors[:error_message][0] }}</p>
+    % end
+  % end
+
+  % gravatar_url = "https://www.gravatar.com/avatar/b7fc2ede6c7c125628f983f4f6d3336a"
+
+  % if !company.empty?
+    % gravatar_url = company['gravatar']
+  % end
+
+  <h2>Sign up and start posting!</h2>
+
+  <img id="company-gravatar" src="{{ gravatar_url }}">
+
+  <form class="payment-details" action="/signup" method="POST">
+
+    <input id="gravatar-url" type="hidden" name="company[gravatar]" value="{{ gravatar_url }}">
+
+    <input type="text" name="company[name]" maxlength="30" placeholder="Company name" value="{{ this.h(company['name']) }}"><br/>
+
+    <input id="company-email" type="email" name="company[email]" placeholder="E-email" value="{{ this.h(company['email']) }}"><br/>
+
+    <input type="text" name="company[url]" placeholder="URL" value="{{ this.h(company['url']) }}"><br/>
+
+    <input type="password" name="company[password]" placeholder="Password"><br/>
+
+    <input type="password" name="company[password_confirmation]" placeholder="Password confirmation"><br/>
+
+    {{ this.partial("new_card") }}
+
+    <h3>Selected plan:</h3>
+
+    {{ this.partial("plans", plan_id: plan_id) }}
+
+    <small class="agree">By signing up, you agree to our <a href="/terms">terms and conditions</a> and <a href="/privacy">privacy policy</a></small>
+
+    <button type="submit" id="button">Sign up!</button>
+
+    <a class="link-large" href="/login">Already have an account?<br/> Log in here!</a>
+  </form>
+</section>
+
+<script src="/js/gravatar.js"></script>

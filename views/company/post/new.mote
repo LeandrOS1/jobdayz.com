@@ -1,0 +1,76 @@
+<section id="new-post">
+  % post = params.fetch(:post, false)
+
+  % if post
+    % if post.errors[:tags] == [:not_present]
+      <p class="alert error">At least one skill is required</p>
+    % end
+    % if post.errors[:title].include?(:not_present)
+      <p class="alert error">Title is required</p>
+    % end
+    % if post.errors[:title] == [:not_in_range]
+      <p class="alert error">Title should not exceed 50 characters</p>
+    % end
+    % if post.errors[:description].include?(:not_present)
+      <p class="alert error">Description is required</p>
+    % end
+    % if post.errors[:description] == [:not_in_range]
+      <p class="alert error">Description should not exceed 600 characters</p>
+    % end
+    % if post.errors[:location] == [:not_present] || post.errors[:remote] == [:not_present]
+      <p class="alert error">You have to provide a location or select the "work from anywhere" option</p>
+    % end
+  % end
+
+  <h2>Create a new job offer</h2>
+
+  <form class="new-post-form" name="punchTokens" action="/post/new" method="POST">
+    <p>Click <a href="/help#examples">here</a> to see some examples that might help you write your post.</p>
+
+    <input type="text" name="post[title]" maxlength="50" value="{{ this.h(post.title) }}" placeholder="Post title">
+
+    <span>Select a skill from the list of keywords:</span>
+
+    <ul id="token-list">
+      <li id="last-child">
+        <input id="input-field" placeholder="Add skill: Ruby, Cuba, Redis" autocomplete="off" type="text">
+      </li>
+    </ul>
+
+    <ul id="autocomplete-list"></ul>
+
+    <input id="query" type="hidden" name="post[tags]" value="">
+
+    <!-- START GOOGLE PLACE AUTOCOMPLETE -->
+
+    <input id="search-text-field" type="text" size="50" placeholder="Location" name="post[location]" autocomplete="off">
+    <br>
+
+    <!-- END GOOGLE PLACE AUTOCOMPLETE -->
+
+    <label><input type="checkbox" name="post[remote]" value="true">
+      <span>Work from anywhere</span>
+    </label>
+
+    <textarea name="post[description]" id="description" maxlength="600" placeholder="Post description">{{ this.h(post.description) }}</textarea><br>
+
+    <span class="countdown" id="countdown">600 characters remaining.</span><br>
+
+    <span class="buttons">
+      <a href="/dashboard">cancel</a>&nbsp;&nbsp;
+
+      <button type="submit">Post</button>
+    </span>
+  </form>
+</section>
+
+<!-- START GOOGLE PLACE AUTOCOMPLETE -->
+
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places&language=en"></script>
+
+<script src="/js/google.js"></script>
+
+<!-- END GOOGLE PLACE AUTOCOMPLETE -->
+
+<script src="/js/punchTokens.js"></script>
+<script src="/js/limit_description.js"></script>

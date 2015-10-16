@@ -1,0 +1,34 @@
+% search = params.fetch(:search, false)
+
+<section id="login">
+  <div class="highlight-box">
+    <h2>Developer Login</h2>
+    <a class="link-large" href="/github_oauth"><i class="fa fa-github"></i>Login using GitHub</a>
+  </div>
+
+  <div class="highlight-box">
+    <h2>Company Login</h2>
+
+    <form id="login-form" action="/login" method="POST">
+      <input type="email" name="company[email]"
+        placeholder="E-mail" value="{{ this.h(user) }}"><br>
+
+      <input type="password" name="company[password]"
+        placeholder="Password"><br>
+
+      <ul>
+        <li>
+          <input id="remember" type="checkbox" name="company[remember]" value="1">
+          <label for="remember">Remember me</label>
+        </li>
+        <li>
+          <a id="forgot-password-link" href="/forgot-password">Forgot password?</a>
+        </li>
+      </ul>
+
+      <button type="submit">Login</button>
+    </form>
+
+    <a class="link-large" href="/signup">Need an account? Sign up here!</a>
+  </div>
+</section>

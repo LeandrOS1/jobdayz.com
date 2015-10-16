@@ -1,0 +1,74 @@
+% developer = this.current_developer
+% favorites = developer.favorites
+
+<section id="my-favorites">
+  <h2>My favorites: <span id="favs-size-title">{{ favorites.size }}</span></h2>
+
+  % if favorites.empty?
+      <p>You have not favorited any posts yet.</p>
+    % else
+      % favorites.each do |post|
+        % if post.published?
+          % application = developer.applications.find(post_id: post.id).first
+          <section class="listing-item">
+            <img src="{{ post.company.gravatar }}">
+            <ul>
+              <li><a href="#">{{ this.h(post.title) }}</a></li>
+              <li>@</li>
+              <li><a href="#">{{ this.h(post.posted_by) }}</a></li>
+
+              % if post.company_url
+                <li> |</li>
+                <li><a href="{{ this.h(post.company_url) }}">{{ this.h(post.company_url) }}</a></li>
+              % end
+
+              % if post.location
+                <li>|</li>
+                <li>{{ this.h(post.location) }}</li>
+              % end
+
+              <li>|</li>
+              <li>Posted {{ post.posted }}</li>
+            </ul>
+            <ul id="post-details-{{ post.id }}">
+              % tags = post.tags.split(",").join(", ")
+              <li><i class="fa fa-tags"></i>{{ this.h(tags) }}</li>
+              <li>|</li>
+              % if post.remote == "true"
+                <li>Work from anywhere</li>
+              % else
+                <li>On-site only</li>
+              % end
+              % if application
+                <li>|</li>
+                <li class="application-status">
+                  Application status:
+                  {{ application.status }}
+                </li>
+              % end
+            </ul>
+            <p class="description">{{ this.h(post.description) }}</p>
+            {{ this.partial("developer/message_form", post: post) }}
+            <ul class="section-footer">
+              <li>
+                % if this.current_user.nil?
+                  <a href="/favorite?post_id={{ post.id }}"><i class="fa fa-star"></i>favorite</a>
+                % elsif developer && developer.favorites.member?(post)
+                  <a href="/favorite/{{ post.id }}"><i class="fa fa-star"></i>favorited</a>
+                % else
+                  <a href="/favorite/{{ post.id }}"><i class="fa fa-star"></i>favorite</a>
+                % end
+              </li>
+              % if application.nil?
+                <span id="apply-link-{{ post.id }}" class="link" onclick="apply({{ post.id }})">
+                <i class="fa fa-check"></i>apply</span>
+              % elsif application.message.nil?
+                <span id="apply-link-{{ post.id }}" class="link" onclick="showMsgForm({{ post.id }})">
+                <i class="fa fa-envelope"></i>send message to company</span>
+              % end
+            </ul>
+          </section>
+        % end
+      % end
+    % end
+</section>

@@ -1,0 +1,81 @@
+% company = this.current_user
+% posts = company.posts.sort_by(:date, order: "ALPHA DESC")
+
+<section id="company-dashboard">
+  <a class="link-large" href="/post/new">
+    <i class="fa fa-pencil-square-o"></i>Create new post
+  </a>
+
+   % if posts.empty?
+      <p>
+        You have no posts yet. Click <a href="/post/new">here</a> to get started!
+      </p>
+    % else
+      <h2>Published posts: <span id="published-posts-size">{{ company.published_posts.size }}</span></h2>
+      % posts.each do |post|
+        <section id="post_{{ post.id }}"class="listing-item">
+          <ul>
+            <li><a href="/search?post_id={{ post.id }}">{{ this.h(post.title) }}</a></li>
+            <li>@</li>
+            <li><a href="/search?company_id={{ post.company.id }}">{{ this.h(post.posted_by) }}</a></li>
+
+            % if post.company_url
+              <li> |</li>
+              <li><a href="{{ this.h(post.company_url) }}">{{ this.h(post.company_url) }}</a></li>
+            % end
+
+            % if post.location
+              <li>|</li>
+              <li>{{ this.h(post.location) }}</li>
+            % end
+
+            <li>|</li>
+            <li>Posted {{ post.posted }}</li>
+          </ul>
+          <ul>
+
+            % tags = post.tags.split(",").join(", ")
+
+            <li><i class="fa fa-tags"></i> {{ this.h(tags) }}</li>
+            <li>|</li>
+            <li>
+              % if post.remote == "true"
+                Work from anywhere
+              % else
+                On-site only
+              % end
+            </li>
+            <li>|</li>
+            <li>
+              % if post.applications.size > 0
+                <a href="/post/{{ post.id }}/applications">
+                  <i class="fa fa-users"></i>show list of applicants:{{ post.active_applications.size }}</a>
+              % else
+                Applicants: {{ post.active_applications.size }}
+              % end
+            </li>
+          </ul>
+          <p class="description">{{ this.h(post.description) }}</p>
+          <ul class="section-footer">
+            <li>
+              % if post.status == "published"
+                <span class="link" id="publish-link-{{ post.id }}" onclick="publishPost({{ post.id }}, {{ company.plan.posts }})">
+                  <i class="fa fa-check published"></i>unpublish</span>
+              % else
+                <span class="link" id="publish-link-{{ post.id }}" onclick="publishPost({{ post.id }}, {{ company.plan.posts }})">
+                  <i class="fa fa-check unpublished"></i>publish</span>
+              % end
+            </li>
+            <li>
+              <a href="/post/edit/{{ post.id }}">
+              <i class="fa fa-pencil-square-o"></i>edit</a>
+            </li>
+            <li>
+             <a href="/post/remove/{{ post.id }}" onclick="return confirmDelete('post')">
+               <i class="fa fa-trash-o"></i>delete post</a>
+            </li>
+          </ul>
+        </section>
+      % end
+    % end
+</section>

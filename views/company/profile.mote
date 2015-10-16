@@ -1,0 +1,52 @@
+% company = this.current_user
+
+<section id="company-profile">
+  <section class="company-profile-item">
+    <h2>Company details</h2>
+    <ul>
+      <li>{{ this.h(company.name) }}</li>
+      <li>{{ this.h(company.email) }}</li>
+      <li>{{ this.h(company.url) }}</li>
+    </ul>
+    <a href="/edit"><i class="fa fa-pencil-square-o cursor"></i>edit</a>
+  </section>
+
+  <section class="company-profile-item">
+    <h2>Subscription info </h2>
+    <ul>
+      <li>
+        Subscription status:
+        % if company.active?
+          Active
+        % else
+          Suspended
+        % end
+      </li>
+      <li class="capitalize">Plan: {{ plan.name }}</li>
+      <li>Posts per month: {{ plan.posts }}</li>
+      <li>Price: {{ plan.price }} USD/month</li>
+      <li>
+        % if company.active?
+          <a  id="cancel" href="/cancel_subscription">Cancel subscription</a>
+        % else
+          <a href="customer/subscription">Reactivate subscription</a>
+        % end
+      </li>
+      <li><a href="/customer/history">Payment history</a></li>
+    </ul>
+    <a href="/customer/subscription"><i class="fa fa-pencil-square-o cursor"></i>edit</a>
+  </section>
+
+  <section class="company-profile-item">
+    <h2>Payment info</h2>
+    % if card.nil?
+      <p class="item-subtitle">You have no registered payment details</p>
+     % else
+      {{ this.partial("/customer/payment_details", card: card) }}
+    </li>
+   % end
+    <a href="/customer/update"><i class="fa fa-pencil-square-o cursor"></i>edit</a>
+  </section>
+
+  <a id="delete" href="/delete">Delete account</a>
+</section>

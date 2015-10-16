@@ -1,0 +1,117 @@
+% developer = this.current_developer
+% subtitle = params.fetch(:subtitle, "")
+
+<section id="my-applications">
+  <h2>
+      % if active_applications
+        Active applications:
+      % else
+        Discarded applications:
+      % end
+      <span id="apps-size">{{ applications.size }}</span>
+    </h2>
+
+    <ul>
+      % if active_applications
+        <li><a id="active-link" href="/applications">Active applications</a></li>
+        <li>|</li>
+        <li><a id="underline-none" href="/history">Discarded applications</a></li>
+      % else
+        <li><a id="underline-none" href="/applications">Active applications</a></li>
+        <li>|</li>
+        <li><a id="active-link" href="/history">Discarded applications</a></li>
+      % end
+    </ul>
+
+    % if applications.empty?
+      <p>{{ subtitle }}</p>
+    % else
+      % applications.each do |application|
+        % post = application.post
+          <section class="listing-item">
+            <img src="{{ post.company.gravatar }}">
+            <ul>
+              <li>{{ this.h(post.title) }}</li>
+              <li>@</li>
+              <li><a href="search?company_id={{ post.company.id }}">{{ this.h(post.posted_by) }}</a></li>
+
+              % if post.company_url
+                <li> |</li>
+                <li><a href="{{ this.h(post.company_url) }}">{{ this.h(post.company_url) }}</a></li>
+              % end
+
+              % if post.location
+                <li>|</li>
+                <li>{{ this.h(post.location) }}</li>
+              % end
+
+              <li>|</li>
+              <li>Applied {{ application.applied }}</li>
+            </ul>
+            <ul>
+
+              % tags = post.tags.split(",").join(", ")
+
+              <li><i class="fa fa-tags"></i>{{ this.h(tags) }}</li>
+              <li>|</li>
+              <li>
+                 % if post.remote == "true"
+                  Work from anywhere
+                % else
+                  On-site only
+                % end
+              </li>
+              <li>|</li>
+              <li class="application-status">Application status: {{ application.status }}</li>
+            </ul>
+            <p>{{ this.h(post.description) }}</p>
+            <span id="hidden-{{ post.id }}" class="hidden">
+
+              <p id="msg-{{ post.id }}">
+                % if application.message
+                  <span class="application-msg"><i class="fa fa-envelope"></i>message:</span>
+                  {{ this.h(application.message) }}
+                % end
+              </p>
+
+              <p id="note-{{ application.id }}">
+                % if application.note
+                  <span onclick="editNote({{ application.id }})" class="link"><i class="fa fa-pencil-square-o"></i>note to self:</span>
+                    {{ this.h(application.note) }}
+                % end
+              </p>
+            </span>
+            {{ this.partial("developer/message_form", post: post) }}
+            {{ this.partial("developer/note_form", application: application, post: post) }}
+            <ul class="section-footer">
+              <li>
+              % if application.message || application.note
+                <span id="show-more-{{ post.id }}" class="toggle link" onclick="toggle({{ post.id }})">show more</span>
+              % else
+                <span id="show-more-{{ post.id }}" class="toggle link toggle-hidden" onclick="toggle({{ post.id }})">show more</span>
+              % end
+              </li>
+              % if !application.message &&  application.status == "active"
+                <li>
+                  <span id="apply-link-{{ post.id }}" class="link" onclick="showMsgForm({{ post.id }})">
+                    <i class="fa fa-envelope"></i>send message to company</span>
+                </li>
+              % end
+              % if !application.note &&  application.status == "active"
+                <li>
+                  <span id="note-link-{{ application.id }}" class="link" onclick="showNoteForm({{ application.id }})">
+                  <i class="fa fa-pencil-square-o"></i>note to self</span>
+                </li>
+              % end
+              % if application.status == "active"
+                <li>
+                  <a onclick="return confirmDelete('application')" href="remove/{{ application.id }}">
+                  <i class="fa fa-trash-o"></i>delete</a>
+                </li>
+              % end
+              </ul>
+          </section>
+      % end
+    % end
+
+<script src="/js/limit_description.js"></script>

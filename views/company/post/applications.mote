@@ -1,0 +1,84 @@
+<section id="applicants-post">
+  <h2>Position: {{ this.h(post.title) }} | Active applicants: <span id="active-applications">{{ post.active_applications.size }}</span></h2>
+
+  <ul>
+    % if active_applications
+      <li><a id="active-link" href="/post/{{ post.id }}/applications">Active applications</a></li>
+      <li>|</li>
+      <li><a id="underline-none" href="/post/applications/discarded/{{ post.id }}">Discarded applications</a></li>
+    % else
+      <li><a id="underline-none"  href="/post/{{ post.id }}/applications">Active applications</a></li>
+      <li>|</li>
+      <li><a id="active-link" href="/post/applications/discarded/{{ post.id }}">Discarded applications</a></li>
+    % end
+  </ul>
+
+  % if applications.empty?
+    <p class="item-text posts-found">{{ text }}</p>
+  % else
+    % applications.each do |application|
+      % developer = application.developer
+
+      <section id="application-{{ application.id }}" class="listing-item">
+        <img src="//www.gravatar.com/avatar/{{ developer.gravatar }}">
+        <ul>
+          <li>{{ this.h(developer.name) }}</li>
+          <li>|</li>
+          <li>
+            GitHub:
+            <a href="https://www.github.com/{{ developer.username }}">
+              {{ developer.username }}</a>
+          </li>
+          % if developer.url
+            <li>|</li>
+            <li>URL: <a href="{{ this.h(developer.url) }}">
+              {{ this.h(developer.url) }}</a>
+            </li>
+          % end
+          <li>|</li>
+          <li>Applied {{ application.applied }}</li>
+        </ul>
+        % if !developer.bio.nil?
+          <p class="bio">
+            <span class="bio-icon"><i class="fa fa-user"></i>bio: </span>
+            {{ this.h(developer.bio) }}
+          </p>
+        % end
+        % if !application.message.nil?
+          <p>
+            <span class="application-msg"><i class="fa fa-envelope"></i>message: </span>
+            {{ this.h(application.message) }}
+        </p>
+        % end
+        <ul class="section-footer">
+          % if active_applications
+            % if post.favorites.member?(application)
+            <li>
+              <span class="link" id="favorite-link-{{ application.id }}" onclick="favoriteApplicant({{ application.id }})">
+              <i class="fa fa-star"></i>favorited</span>
+            </li>
+            % else
+              <li>
+                <span class="link" id="favorite-link-{{ application.id }}" onclick="favoriteApplicant({{ application.id }})">
+                <i class="fa fa-star-o"></i>favorite</span>
+              </li>
+            % end
+            <li>
+              <a href="/application/{{ application.id }}/contact">
+              <i class="fa fa-envelope"></i>contact developer</a>
+            </li>
+            <li>
+              <span class="link" onclick="discardApplicant({{ application.id }})">
+              <i class="fa fa-trash-o"></i>discard</span>
+            </li>
+          % else
+            <li>
+              <span class="link" onclick="addApplicant({{ application.id }})">
+              <i class="fa fa-plus"></i>move to applicants list</span>
+            </li>
+          % end
+        </ul>
+      </section>
+    % end
+  % end
+</section>
